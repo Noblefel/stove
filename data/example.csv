@@ -1,0 +1,13 @@
+Name,Address,Phone, Status
+John Doe,Lorem,111-222-333, active
+John Smith,Ipsum,444-555-666, active
+Jane Smith,Dolor,777-888-999, active
+Lorem Ipsum,Sit Amet,11-12-13, inactive
+John Doe,Consectetur,111-222-333, inactive
+John Smith,Adipiscing,444-555-666, active
+Jane Smith,Elit,777-888-999, inactive
+Lorem Ipsum,Pellentesque,11-12-13, active
+John Doe,A Pharetra Diam,111-222-333, inactive
+John Smith,Nec Cursus Sem,444-555-666, inactive
+Jane Smith,leo eu ,777-888-999, inactive
+Lorem Ipsum,Blandit,11-12-13 , active

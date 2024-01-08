@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/beercss@3.4.10/dist/cdn/beer.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    body {
+      height: 100vh;
+      font-family: Geneva, Verdana, sans-serif;
+      background-color: white;
+      --primary: #5144c7;
+      --secondary: #d0cdff77;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 1.3rem; 
+      padding: 0.5rem;
+      margin-top: -1rem;
+      background-color: var(--secondary);
+      color: var(--primary);
+    }
+
+    .content {
+      display: block;
+      padding: 1rem;
+      font-weight: 500;
+      line-height: 1.4rem;
+    }
+
+    .table-wrapper { 
+      border-top-left-radius: 8px !important;
+      border-top-right-radius: 8px !important;
+      overflow: hidden !important;
+    }
+
+    table {
+      border-collapse: collapse;
+      tr:first-of-type {
+        background-color: var(--primary) !important;
+        color: white;
+        font-weight: 600;
+
+        td {
+          padding: 0.7rem;
+        }
+      }
+
+      tr, td {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+    }
+
+    @page 
+    {
+        size:  auto; 
+        margin: 3rem 0;   
+    }
+  </style>
+  <body> 
+    <div class="padding">
+      <h1 class="center-align">The Title</h1>
+      <div class="divider"></div>
+      <div class="content">
+        Optional description here
+
+        <div class="space"></div>
+
+        <div class="table-wrapper">
+          <table class="stripes"> 
+            <tbody>
+              [%rows%] 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
