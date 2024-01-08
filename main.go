@@ -79,7 +79,7 @@ func setupHTML(htmlName string, data [][]string) (htmlString string, err error) 
 
 	htmlBytes, err := os.ReadFile("html/" + htmlName + ".html")
 	if err != nil {
-		log.Println("Error opening csv file")
+		log.Println("Error reading html file")
 		return "", err
 	}
 
