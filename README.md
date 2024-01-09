@@ -24,8 +24,11 @@ go run main.go
 - csv: Specifies the csv file you want to convert 
 - output: Defines the name for the resulting PDF 
 - html: The template you want to use for rendering the data
+- title: Title to be printed in the content header
+
+example:
 ```sh
-go run main.go -csv=employees -output=employees_2024 -html=custom_template
+go run main.go -output=employees_2024 -title="My Employees"
 ```
 
 (no need to the include the file extension) 

@@ -19,6 +19,7 @@ var (
 	defaultCSVName    = "example"
 	defaultOutputName = fmt.Sprintf("Sample_%d", time.Now().Unix())
 	defaultHTMLName   = "basic"
+	defaultTitle      = fmt.Sprintf("The Title (%s)", time.Now().Format("2006-01-02"))
 )
 
 func main() {
@@ -26,6 +27,7 @@ func main() {
 	csvName := flag.String("csv", defaultCSVName, "The name of the csv file")
 	outputName := flag.String("output", defaultOutputName, "Name for the pdf results")
 	htmlName := flag.String("html", defaultHTMLName, "The name of the HTML template")
+	title := flag.String("title", defaultTitle, "Title to be printed in the header")
 
 	flag.Parse()
 
@@ -34,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	htmlString, err := setupHTML(*htmlName, data)
+	htmlString, err := setupHTML(*htmlName, *title, data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,7 +76,7 @@ func getCSVData(csvName string) (data [][]string, err error) {
 	return data, nil
 }
 
-func setupHTML(htmlName string, data [][]string) (htmlString string, err error) {
+func setupHTML(htmlName, title string, data [][]string) (htmlString string, err error) {
 	log.Println("Building the html...")
 
 	htmlBytes, err := os.ReadFile("html/" + htmlName + ".html")
@@ -95,6 +97,7 @@ func setupHTML(htmlName string, data [][]string) (htmlString string, err error) 
 	}
 
 	htmlString = strings.Replace(string(htmlBytes), "[%rows%]", rows, 1)
+	htmlString = strings.Replace(htmlString, "[%title%]", title, 1)
 	return htmlString, nil
 }
 
