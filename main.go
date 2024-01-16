@@ -94,7 +94,7 @@ func setupHTML(htmlName, title string, showNumbers bool, data [][]string) (htmlS
 			if i == 0 {
 				tr += "<td>No</td>"
 			} else {
-				tr += fmt.Sprintf("<td>%d</td>", i+1)
+				tr += fmt.Sprintf("<td>%d</td>", i)
 			}
 		}
 
