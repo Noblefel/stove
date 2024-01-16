@@ -28,6 +28,7 @@ func main() {
 	outputName := flag.String("output", defaultOutputName, "Name for the pdf results")
 	htmlName := flag.String("html", defaultHTMLName, "The name of the HTML template")
 	title := flag.String("title", defaultTitle, "Title to be printed in the header")
+	showNumbers := flag.Bool("number", false, "Show rows number")
 
 	flag.Parse()
 
@@ -36,7 +37,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	htmlString, err := setupHTML(*htmlName, *title, data)
+	htmlString, err := setupHTML(*htmlName, *title, *showNumbers, data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +77,7 @@ func getCSVData(csvName string) (data [][]string, err error) {
 	return data, nil
 }
 
-func setupHTML(htmlName, title string, data [][]string) (htmlString string, err error) {
+func setupHTML(htmlName, title string, showNumbers bool, data [][]string) (htmlString string, err error) {
 	log.Println("Building the html...")
 
 	htmlBytes, err := os.ReadFile("html/" + htmlName + ".html")
@@ -87,8 +88,16 @@ func setupHTML(htmlName, title string, data [][]string) (htmlString string, err 
 
 	var rows string
 
-	for _, slice := range data {
+	for i, slice := range data {
 		tr := "<tr>"
+		if showNumbers {
+			if i == 0 {
+				tr += "<td>No</td>"
+			} else {
+				tr += fmt.Sprintf("<td>%d</td>", i+1)
+			}
+		}
+
 		for _, s := range slice {
 			tr += fmt.Sprintf("<td>%s</td>", s)
 		}

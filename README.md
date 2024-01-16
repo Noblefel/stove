@@ -25,10 +25,11 @@ go run main.go
 - output: Defines the name for the resulting PDF 
 - html: The template you want to use for rendering the data
 - title: Title to be printed in the content header
+- number: Show rows number
 
 example:
 ```sh
-go run main.go -output=employees_2024 -title="My Employees"
+go run main.go -output=employees_2024 -title="My Employees" -number=true
 ```
 
 (no need to the include the file extension) 
