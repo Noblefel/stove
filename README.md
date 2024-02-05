@@ -1,17 +1,12 @@
 # STOVE
 ### Simple Tabular Output View with Ease
 
-A small application that converts CSV (Comma-Separated Values) data into a PDF document. The application reads a CSV file, creates an HTML representation of the data with a styled table, and then converts this HTML into a PDF using the [chromedp](https://github.com/chromedp/chromedp) Package.
-
-<br>
+A small application that converts CSV (Comma-Separated Values) data into a PDF document. First, it reads a CSV file, then creates an HTML representation of the data with a styled table, and converts it into a PDF using the [chromedp](https://github.com/chromedp/chromedp) Package.
 
 # Installation 
 ```bash
 git clone https://github.com/Noblefel/stove
 ``` 
-
-<br>
-
 
 # Usage
 ### Basic 

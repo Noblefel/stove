@@ -16,28 +16,22 @@ import (
 )
 
 var (
-	defaultCSVName    = "example"
-	defaultOutputName = fmt.Sprintf("Sample_%d", time.Now().Unix())
-	defaultHTMLName   = "basic"
-	defaultTitle      = fmt.Sprintf("The Title (%s)", time.Now().Format("2006-01-02"))
+	csvName     = flag.String("csv", "example", "The name of the csv file")
+	outputName  = flag.String("output", fmt.Sprintf("sample_%d", time.Now().Unix()), "Name for the pdf results")
+	htmlName    = flag.String("html", "basic", "The name of the HTML template")
+	title       = flag.String("title", "Untitled", "Title to be printed in the header")
+	showNumbers = flag.Bool("number", false, "Show rows number")
 )
 
 func main() {
-
-	csvName := flag.String("csv", defaultCSVName, "The name of the csv file")
-	outputName := flag.String("output", defaultOutputName, "Name for the pdf results")
-	htmlName := flag.String("html", defaultHTMLName, "The name of the HTML template")
-	title := flag.String("title", defaultTitle, "Title to be printed in the header")
-	showNumbers := flag.Bool("number", false, "Show rows number")
-
 	flag.Parse()
 
-	data, err := getCSVData(*csvName)
+	data, err := getCSVData()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	htmlString, err := setupHTML(*htmlName, *title, *showNumbers, data)
+	htmlString, err := setupHTML(data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,10 +53,10 @@ func main() {
 	log.Println("Success")
 }
 
-func getCSVData(csvName string) (data [][]string, err error) {
+func getCSVData() (data [][]string, err error) {
 	log.Println("Getting data from csv...")
 
-	file, err := os.Open("data/" + csvName + ".csv")
+	file, err := os.Open("data/" + *csvName + ".csv")
 	if err != nil {
 		log.Println("Error opening csv file")
 		return data, err
@@ -77,10 +71,10 @@ func getCSVData(csvName string) (data [][]string, err error) {
 	return data, nil
 }
 
-func setupHTML(htmlName, title string, showNumbers bool, data [][]string) (htmlString string, err error) {
+func setupHTML(data [][]string) (htmlString string, err error) {
 	log.Println("Building the html...")
 
-	htmlBytes, err := os.ReadFile("html/" + htmlName + ".html")
+	htmlBytes, err := os.ReadFile("html/" + *htmlName + ".html")
 	if err != nil {
 		log.Println("Error reading html file")
 		return "", err
@@ -90,7 +84,7 @@ func setupHTML(htmlName, title string, showNumbers bool, data [][]string) (htmlS
 
 	for i, slice := range data {
 		tr := "<tr>"
-		if showNumbers {
+		if *showNumbers {
 			if i == 0 {
 				tr += "<td>No</td>"
 			} else {
@@ -106,7 +100,7 @@ func setupHTML(htmlName, title string, showNumbers bool, data [][]string) (htmlS
 	}
 
 	htmlString = strings.Replace(string(htmlBytes), "[%rows%]", rows, 1)
-	htmlString = strings.Replace(htmlString, "[%title%]", title, 1)
+	htmlString = strings.Replace(htmlString, "[%title%]", *title, 1)
 	return htmlString, nil
 }
 
