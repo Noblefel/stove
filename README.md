@@ -1,5 +1,5 @@
 # STOVE
-### Simple Tabular Output View with Ease
+### Simple Tabular Output View
 
 A small application that converts CSV (Comma-Separated Values) data into a PDF document. First, it reads a CSV file, then creates an HTML representation of the data with a styled table, and converts it into a PDF using the [chromedp](https://github.com/chromedp/chromedp) Package.
 

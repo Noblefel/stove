@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -26,12 +27,18 @@ var (
 func main() {
 	flag.Parse()
 
-	data, err := getCSVData()
+	log.Println("Getting data from csv...")
+	file, err := os.Open("data/" + *csvName + ".csv")
+	if err != nil {
+		log.Fatal("Error opening csv file")
+	}
+
+	rows, err := readCSV(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	htmlString, err := setupHTML(data)
+	htmlString, err := setupHTML(rows)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,25 +60,45 @@ func main() {
 	log.Println("Success")
 }
 
-func getCSVData() (data [][]string, err error) {
-	log.Println("Getting data from csv...")
+func readCSV(file *os.File) (string, error) {
+	reader := csv.NewReader(file)
+	var rows strings.Builder
 
-	file, err := os.Open("data/" + *csvName + ".csv")
-	if err != nil {
-		log.Println("Error opening csv file")
-		return data, err
+	i := 0
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return "", err
+		}
+
+		var row strings.Builder
+		row.WriteString("<tr>")
+
+		if *showNumbers {
+			if i == 0 {
+				row.WriteString("<td>No</td>")
+			} else {
+				row.WriteString(fmt.Sprintf("<td>%d</td>", i))
+			}
+		}
+
+		for _, s := range line {
+			row.WriteString(fmt.Sprintf("<td>%s</td>", s))
+		}
+
+		row.WriteString("</tr>")
+		rows.WriteString(row.String())
+		i++
 	}
 
-	data, err = csv.NewReader(file).ReadAll()
-	if err != nil {
-		log.Println("Error reading csv file")
-		return data, err
-	}
-
-	return data, nil
+	return rows.String(), nil
 }
 
-func setupHTML(data [][]string) (htmlString string, err error) {
+func setupHTML(rows string) (htmlString string, err error) {
 	log.Println("Building the html...")
 
 	htmlBytes, err := os.ReadFile("html/" + *htmlName + ".html")
@@ -80,27 +107,8 @@ func setupHTML(data [][]string) (htmlString string, err error) {
 		return "", err
 	}
 
-	var rows string
-
-	for i, slice := range data {
-		tr := "<tr>"
-		if *showNumbers {
-			if i == 0 {
-				tr += "<td>No</td>"
-			} else {
-				tr += fmt.Sprintf("<td>%d</td>", i)
-			}
-		}
-
-		for _, s := range slice {
-			tr += fmt.Sprintf("<td>%s</td>", s)
-		}
-		tr += "</tr>"
-		rows += tr
-	}
-
-	htmlString = strings.Replace(string(htmlBytes), "[%rows%]", rows, 1)
-	htmlString = strings.Replace(htmlString, "[%title%]", *title, 1)
+	htmlString = strings.Replace(string(htmlBytes), "[%title%]", *title, 1)
+	htmlString = strings.Replace(htmlString, "[%rows%]", rows, 1)
 	return htmlString, nil
 }
 
