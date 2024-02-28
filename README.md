@@ -1,7 +1,6 @@
 # STOVE
-### Simple Tabular Output View
 
-A small application that converts CSV (Comma-Separated Values) data into a PDF document. First, it reads a CSV file, then creates an HTML representation of the data with a styled table, and converts it into a PDF using the [chromedp](https://github.com/chromedp/chromedp) Package.
+A small application that converts CSV (Comma-Separated Values) data into a PDF document. First, it reads a CSV file, then generates the formatted HTML table, and converts it into a PDF using the [chromedp](https://github.com/chromedp/chromedp) package.
 
 # Installation 
 ```bash
@@ -16,15 +15,15 @@ go run main.go
 ```
 
 ### Command Flags
-- csv: Specifies the csv file you want to convert 
-- output: Defines the name for the resulting PDF 
+- file: Specifies the csv file you want to convert 
+- out: Defines the name for the resulting PDF 
 - html: The template you want to use for rendering the data
 - title: Title to be printed in the content header
-- number: Show rows number
+- num: Show rows number
 
 example:
 ```sh
-go run main.go -output=employees_2024 -title="My Employees" -number=true
+go run main.go -out=employees_2024 -title="My Employees" -num=true
 ```
 
 (no need to the include the file extension) 

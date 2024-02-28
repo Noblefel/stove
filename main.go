@@ -17,30 +17,29 @@ import (
 )
 
 var (
-	csvName     = flag.String("csv", "example", "The name of the csv file")
-	outputName  = flag.String("output", fmt.Sprintf("sample_%d", time.Now().Unix()), "Name for the pdf results")
-	htmlName    = flag.String("html", "basic", "The name of the HTML template")
-	title       = flag.String("title", "Untitled", "Title to be printed in the header")
-	showNumbers = flag.Bool("number", false, "Show rows number")
+	file  = flag.String("file", "example", "The name of the csv file")
+	out   = flag.String("out", fmt.Sprintf("sample_%d", time.Now().Unix()), "Name for the pdf result")
+	html  = flag.String("html", "default", "The name of the HTML template")
+	title = flag.String("title", "Untitled", "Title to be printed in the header")
+	num   = flag.Bool("num", false, "Show rows number")
 )
 
 func main() {
 	flag.Parse()
 
-	log.Println("Getting data from csv...")
-	file, err := os.Open("data/" + *csvName + ".csv")
+	file, err := os.Open("data/" + *file + ".csv")
 	if err != nil {
-		log.Fatal("Error opening csv file")
+		log.Fatal("opening file: ", err)
 	}
 
 	rows, err := readCSV(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("readCSV: ", err)
 	}
 
 	htmlString, err := setupHTML(rows)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("setupHTML: ", err)
 	}
 
 	ctx, cancel := chromedp.NewContext(context.Background())
@@ -52,9 +51,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = os.WriteFile("output/"+*outputName+".pdf", buf, 0644)
+	err = os.WriteFile("output/"+*out+".pdf", buf, 0644)
 	if err != nil {
-		log.Fatalln("Error writing pdf ", err)
+		log.Fatalln("writing file: ", err)
 	}
 
 	log.Println("Success")
@@ -78,7 +77,7 @@ func readCSV(file *os.File) (string, error) {
 		var row strings.Builder
 		row.WriteString("<tr>")
 
-		if *showNumbers {
+		if *num {
 			if i == 0 {
 				row.WriteString("<td>No</td>")
 			} else {
@@ -101,7 +100,7 @@ func readCSV(file *os.File) (string, error) {
 func setupHTML(rows string) (htmlString string, err error) {
 	log.Println("Building the html...")
 
-	htmlBytes, err := os.ReadFile("html/" + *htmlName + ".html")
+	htmlBytes, err := os.ReadFile("html/" + *html + ".html")
 	if err != nil {
 		log.Println("Error reading html file")
 		return "", err
