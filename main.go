@@ -27,12 +27,12 @@ var (
 func main() {
 	flag.Parse()
 
-	file, err := os.Open("data/" + *file + ".csv")
+	f, err := os.Open("data/" + *file + ".csv")
 	if err != nil {
 		log.Fatal("opening file: ", err)
 	}
 
-	rows, err := readCSV(file)
+	rows, err := readCSV(f)
 	if err != nil {
 		log.Fatal("readCSV: ", err)
 	}
@@ -98,11 +98,8 @@ func readCSV(file *os.File) (string, error) {
 }
 
 func setupHTML(rows string) (htmlString string, err error) {
-	log.Println("Building the html...")
-
 	htmlBytes, err := os.ReadFile("html/" + *html + ".html")
 	if err != nil {
-		log.Println("Error reading html file")
 		return "", err
 	}
 
