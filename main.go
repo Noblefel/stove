@@ -16,31 +16,33 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-var (
-	file  = flag.String("file", "example", "The name of the csv file")
-	out   = flag.String("out", fmt.Sprintf("sample_%d", time.Now().Unix()), "Name for the pdf result")
-	html  = flag.String("html", "default", "The name of the HTML template")
-	title = flag.String("title", "Untitled", "Title to be printed in the header")
-	num   = flag.Bool("num", false, "Show rows number")
-)
-
 func main() {
+	var (
+		file  = flag.String("file", "example", "The name of the csv file")
+		out   = flag.String("out", fmt.Sprintf("sample_%d", time.Now().Unix()), "Name for the pdf result")
+		html  = flag.String("html", "default", "The name of the HTML template")
+		title = flag.String("title", "Untitled", "Title to be printed in the header")
+		num   = flag.Bool("num", false, "Show rows number")
+	)
 	flag.Parse()
 
 	f, err := os.Open("data/" + *file + ".csv")
 	if err != nil {
 		log.Fatal("opening file: ", err)
 	}
+	defer f.Close()
 
-	rows, err := readCSV(f)
+	rows, err := readCSV(f, *num)
 	if err != nil {
 		log.Fatal("readCSV: ", err)
 	}
 
-	htmlString, err := setupHTML(rows)
+	htmlBytes, err := os.ReadFile("html/" + *html + ".html")
 	if err != nil {
-		log.Fatal("setupHTML: ", err)
+		log.Fatal("reading html: ", err)
 	}
+
+	htmlString := setupHTML(htmlBytes, rows, *title)
 
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
@@ -53,14 +55,15 @@ func main() {
 
 	err = os.WriteFile("output/"+*out+".pdf", buf, 0644)
 	if err != nil {
-		log.Fatalln("writing file: ", err)
+		log.Fatal("writing pdf: ", err)
 	}
 
-	log.Println("Success")
+	log.Println("Done")
 }
 
-func readCSV(file *os.File) (string, error) {
-	reader := csv.NewReader(file)
+// readCSV returns the formatted table rows
+func readCSV(r io.Reader, num bool) (string, error) {
+	reader := csv.NewReader(r)
 	var rows strings.Builder
 
 	i := 0
@@ -69,7 +72,6 @@ func readCSV(file *os.File) (string, error) {
 		if err == io.EOF {
 			break
 		}
-
 		if err != nil {
 			return "", err
 		}
@@ -77,7 +79,7 @@ func readCSV(file *os.File) (string, error) {
 		var row strings.Builder
 		row.WriteString("<tr>")
 
-		if *num {
+		if num {
 			if i == 0 {
 				row.WriteString("<td>No</td>")
 			} else {
@@ -97,15 +99,11 @@ func readCSV(file *os.File) (string, error) {
 	return rows.String(), nil
 }
 
-func setupHTML(rows string) (htmlString string, err error) {
-	htmlBytes, err := os.ReadFile("html/" + *html + ".html")
-	if err != nil {
-		return "", err
-	}
-
-	htmlString = strings.Replace(string(htmlBytes), "[%title%]", *title, 1)
+// setupHTML builds the rest of the html string
+func setupHTML(html []byte, rows, title string) string {
+	htmlString := strings.Replace(string(html), "[%title%]", title, 1)
 	htmlString = strings.Replace(htmlString, "[%rows%]", rows, 1)
-	return htmlString, nil
+	return htmlString
 }
 
 func printToPDF(res *[]byte, htmlString string) chromedp.Tasks {
