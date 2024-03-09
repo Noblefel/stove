@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -26,7 +27,7 @@ func main() {
 	)
 	flag.Parse()
 
-	f, err := os.Open("data/" + *file + ".csv")
+	f, err := os.Open(filepath.Join("data", *file+".csv"))
 	if err != nil {
 		log.Fatal("opening file: ", err)
 	}
@@ -37,7 +38,7 @@ func main() {
 		log.Fatal("readCSV: ", err)
 	}
 
-	htmlBytes, err := os.ReadFile("html/" + *html + ".html")
+	htmlBytes, err := os.ReadFile(filepath.Join("html/", *html+".html"))
 	if err != nil {
 		log.Fatal("reading html: ", err)
 	}
@@ -53,7 +54,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = os.WriteFile("output/"+*out+".pdf", buf, 0644)
+	err = os.WriteFile(filepath.Join("output/", *out+".pdf"), buf, 0644)
 	if err != nil {
 		log.Fatal("writing pdf: ", err)
 	}
@@ -137,7 +138,12 @@ func printToPDF(res *[]byte, htmlString string) chromedp.Tasks {
 			return nil
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			buf, _, err := page.PrintToPDF().WithPrintBackground(true).WithDisplayHeaderFooter(true).Do(ctx)
+			buf, _, err := page.
+				PrintToPDF().
+				WithPrintBackground(true).
+				WithDisplayHeaderFooter(true).
+				Do(ctx)
+
 			if err != nil {
 				return err
 			}

@@ -14,12 +14,14 @@ To quickly convert a CSV file to PDF using the default settings, simply run:
 go run main.go
 ```
 
-### Command Flags
-- file: Specifies the csv file you want to convert 
-- out: Defines the name for the resulting PDF 
-- html: The template you want to use for rendering the data
-- title: Title to be printed in the content header
-- num: Show rows number
+### Command Flags 
+| Flag | Default Value | Description |
+| -------- | ------- | ------- |
+| file | example | Specifies the csv file you want to convert  |
+| out | sample_{timestamp} | Defines the name for the resulting PDF   |
+| html | default | The template you want to use for rendering the data |
+| title | Untitled | Title to be printed in the content header |
+| num | false | Show rows number  |
 
 example:
 ```sh
